@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechAnarc - AI-Powered Digital Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(26, 35, 126, 0.85), rgba(12, 14, 19, 0.75), rgba(12, 30, 39, 0.65));
+            z-index: -1;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 5% auto;
+            padding: 2rem;
+            max-width: 700px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-slow {
+            animation: pulse 4s ease-in-out infinite;
+        }
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .carousel-item {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .carousel-item.active {
+            display: block;
+            opacity: 1;
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: #60A5FA;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #60A5FA, #27262c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text; /* add this for non-webkit browsers */
+    color: transparent; /* fallback color if gradient fails */
+    margin-bottom: 1rem;
+}
+
+        input, textarea {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+        .close {
+            color: #666;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close:hover { color: #000; }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 w-full glass z-50">
+        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center animate-pulse-slow">
+                    <i class="fas fa-cube text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold">TechAnarc</h1>
+            </div>
+            <nav class="hidden md:flex gap-8">
+                <a href="#home" class="nav-link hover:text-blue-300">Home</a>
+                <a href="#services" class="nav-link hover:text-blue-300">Services</a>
+                <a href="#solutions" class="nav-link hover:text-blue-300">Solutions</a>
+                <a href="#contact" class="nav-link hover:text-blue-300">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center text-center px-6 pt-20">
+        <div class="max-w-4xl animate-float">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                Innovate the Future with <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">TechAnarc</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-10 text-blue-100">
+                Empowering businesses with cutting-edge AI, automation, and cloud solutions
+            </p>
+            <button onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="btn-glass">
+                Get Started <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+<section id="services" class="py-20 px-6">
+  <div class="container mx-auto">
+    <h2 class="text-4xl font-bold text-center mb-4">Our Services</h2>
+    <p class="text-center text-blue-100 mb-12 max-w-2xl mx-auto">
+      We craft smart, scalable, and modern tech solutions for your business growth.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Web & Mobile -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('webMobileModal')">
+        <i class="fas fa-desktop text-4xl mb-4 text-blue-400"></i>
+        <h3 class="text-xl font-bold mb-2">Web & Mobile Development</h3>
+        <p class="text-blue-100 text-sm">Build modern, responsive web and mobile experiences.</p>
+      </div>
+
+      <!-- AI & Automation -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('aiAutomationModal')">
+        <i class="fas fa-brain text-4xl mb-4 text-purple-400"></i>
+        <h3 class="text-xl font-bold mb-2">AI & Automation</h3>
+        <p class="text-blue-100 text-sm">Automate tasks and enhance decision-making with AI tools.</p>
+      </div>
+
+      <!-- Digital Strategy -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('digitalStrategyModal')">
+        <i class="fas fa-lightbulb text-4xl mb-4 text-yellow-400"></i>
+        <h3 class="text-xl font-bold mb-2">Digital Strategy & Design</h3>
+        <p class="text-blue-100 text-sm">Strategic UI/UX and marketing solutions that convert.</p>
+      </div>
+
+      <!-- Cloud -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('cloudModal')">
+        <i class="fas fa-cloud text-4xl mb-4 text-cyan-400"></i>
+        <h3 class="text-xl font-bold mb-2">Cloud Solutions</h3>
+        <p class="text-blue-100 text-sm">Reliable, scalable cloud infrastructure and migrations.</p>
+      </div>
+
+      <!-- Cybersecurity -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('cyberSecurityModal')">
+        <i class="fas fa-shield-alt text-4xl mb-4 text-red-400"></i>
+        <h3 class="text-xl font-bold mb-2">Cybersecurity</h3>
+        <p class="text-blue-100 text-sm">Protect data, apps, and infrastructure from modern threats.</p>
+      </div>
+
+      <!-- Data Analytics -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('dataAnalyticsModal')">
+        <i class="fas fa-chart-line text-4xl mb-4 text-orange-400"></i>
+        <h3 class="text-xl font-bold mb-2">Data Analytics</h3>
+        <p class="text-blue-100 text-sm">Leverage data for insights and smarter business moves.</p>
+      </div>
+
+      <!-- DevOps -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('devopsModal')">
+        <i class="fas fa-cogs text-4xl mb-4 text-teal-400"></i>
+        <h3 class="text-xl font-bold mb-2">DevOps & CI/CD</h3>
+        <p class="text-blue-100 text-sm">Streamline deployment, reduce downtime, and scale fast.</p>
+      </div>
+
+      <!-- Blockchain -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('blockchainModal')">
+        <i class="fas fa-link text-4xl mb-4 text-indigo-400"></i>
+        <h3 class="text-xl font-bold mb-2">Blockchain Solutions</h3>
+        <p class="text-blue-100 text-sm">Develop secure decentralized systems and smart contracts.</p>
+      </div>
+
+      <!-- ERP -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('erpModal')">
+        <i class="fas fa-network-wired text-4xl mb-4 text-lime-400"></i>
+        <h3 class="text-xl font-bold mb-2">ERP Integration</h3>
+        <p class="text-blue-100 text-sm">Automate and sync your business operations efficiently.</p>
+      </div>
+
+      <!-- IT Consulting -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('itConsultingModal')">
+        <i class="fas fa-user-tie text-4xl mb-4 text-sky-400"></i>
+        <h3 class="text-xl font-bold mb-2">IT Consulting</h3>
+        <p class="text-blue-100 text-sm">Smart guidance to modernize your systems and strategy.</p>
+      </div>
+
+      <!-- UI/UX Design -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('uiuxModal')">
+        <i class="fas fa-pencil-ruler text-4xl mb-4 text-pink-400"></i>
+        <h3 class="text-xl font-bold mb-2">UI/UX Design</h3>
+        <p class="text-blue-100 text-sm">Create visually stunning and user-focused product designs.</p>
+      </div>
+
+      <!-- Maintenance & Support -->
+      <div class="glass-card p-6 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer" onclick="openModal('supportModal')">
+        <i class="fas fa-tools text-4xl mb-4 text-amber-400"></i>
+        <h3 class="text-xl font-bold mb-2">Maintenance & Support</h3>
+        <p class="text-blue-100 text-sm">Keep your systems running smoothly with ongoing support.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+    
+    <!-- Technologies & Tools Section -->
+<section class="py-20 px-6">
+  <div class="container mx-auto">
+    <h2 class="section-title text-center mb-12">Technologies & Tools We Use</h2>
+
+    <!-- Programming & Frameworks -->
+<h3 class="text-center text-lg font-semibold mb-6 text-blue-100">Programming Languages & Frameworks</h3>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+
+  <!-- HTML5 -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-html5 text-3xl text-orange-500 mb-2"></i>
+    <p class="text-sm">HTML5</p>
+  </div>
+
+  <!-- CSS3 -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-css3-alt text-3xl text-blue-500 mb-2"></i>
+    <p class="text-sm">CSS3</p>
+  </div>
+
+  <!-- JavaScript -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-js text-3xl text-yellow-400 mb-2"></i>
+    <p class="text-sm">JavaScript</p>
+  </div>
+
+  <!-- React -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-react text-3xl text-cyan-400 mb-2"></i>
+    <p class="text-sm">React</p>
+  </div>
+
+  <!-- Node.js -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-node-js text-3xl text-green-400 mb-2"></i>
+    <p class="text-sm">Node.js</p>
+  </div>
+
+  <!-- PHP / Laravel -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-php text-3xl text-indigo-400 mb-2"></i>
+    <p class="text-sm">PHP / Laravel</p>
+  </div>
+
+  <!-- Python / Django -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-python text-3xl text-blue-400 mb-2"></i>
+    <p class="text-sm">Python / Django</p>
+  </div>
+
+  <!-- Java / Spring Boot -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-java text-3xl text-red-500 mb-2"></i>
+    <p class="text-sm">Java / Spring Boot</p>
+  </div>
+
+  <!-- Angular -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-angular text-3xl text-red-400 mb-2"></i>
+    <p class="text-sm">Angular</p>
+  </div>
+
+  <!-- Vue.js -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-vuejs text-3xl text-green-500 mb-2"></i>
+    <p class="text-sm">Vue.js</p>
+  </div>
+
+  <!-- GoLang -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fas fa-code text-3xl text-blue-300 mb-2"></i>
+    <p class="text-sm">GoLang</p>
+  </div>
+
+  <!-- Database -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fas fa-database text-3xl text-amber-400 mb-2"></i>
+    <p class="text-sm">MySQL / MongoDB</p>
+  </div>
+
+  <!-- TypeScript -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fab fa-js-square text-3xl text-blue-500 mb-2"></i>
+    <p class="text-sm">TypeScript</p>
+  </div>
+
+  <!-- Next.js -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fas fa-layer-group text-3xl text-gray-300 mb-2"></i>
+    <p class="text-sm">Next.js</p>
+  </div>
+
+  <!-- Flutter -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fas fa-mobile-alt text-3xl text-sky-400 mb-2"></i>
+    <p class="text-sm">Flutter</p>
+  </div>
+
+  <!-- .NET Core -->
+  <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+    <i class="fas fa-code-branch text-3xl text-purple-500 mb-2"></i>
+    <p class="text-sm">.NET Core</p>
+  </div>
+</div>
+
+    <!-- Cloud & DevOps -->
+    <h3 class="text-center text-lg font-semibold mt-16 mb-6 text-blue-100"></h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-aws text-3xl text-orange-400 mb-2"></i>
+        <p class="text-sm">AWS</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-microsoft text-3xl text-blue-400 mb-2"></i>
+        <p class="text-sm">Azure</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-google text-3xl text-red-400 mb-2"></i>
+        <p class="text-sm">Google Cloud</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-docker text-3xl text-blue-500 mb-2"></i>
+        <p class="text-sm">Docker</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-kubernetes text-3xl text-blue-300 mb-2"></i>
+        <p class="text-sm">Kubernetes</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-git-alt text-3xl text-orange-500 mb-2"></i>
+        <p class="text-sm">Git / GitHub</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-code-branch text-3xl text-teal-400 mb-2"></i>
+        <p class="text-sm">CI/CD Pipelines</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-cloud-upload-alt text-3xl text-cyan-400 mb-2"></i>
+        <p class="text-sm">Cloud Deployments</p>
+      </div>
+    </div>
+
+    <!-- Tools & Design -->
+    <h3 class="text-center text-lg font-semibold mt-16 mb-6 text-blue-100"></h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-figma text-3xl text-pink-400 mb-2"></i>
+        <p class="text-sm">Figma</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-sketch text-3xl text-yellow-400 mb-2"></i>
+        <p class="text-sm">Sketch</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fab fa-adobe text-3xl text-red-500 mb-2"></i>
+        <p class="text-sm">Adobe XD</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-terminal text-3xl text-gray-300 mb-2"></i>
+        <p class="text-sm">VS Code</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-cogs text-3xl text-teal-400 mb-2"></i>
+        <p class="text-sm">Postman</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-bug text-3xl text-lime-400 mb-2"></i>
+        <p class="text-sm">JIRA</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-plug text-3xl text-orange-400 mb-2"></i>
+        <p class="text-sm">API Testing</p>
+      </div>
+      <div class="glass-card p-4 rounded-xl text-center hover:scale-110 transition-transform">
+        <i class="fas fa-layer-group text-3xl text-indigo-400 mb-2"></i>
+        <p class="text-sm">Notion / Slack</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- provides the client -->
+<!-- Project Handover Section -->
+<section id="handover" class="py-20 px-6 text-gray-100">
+  <div class="container mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-6 text-white">What We Deliver After Project Completion</h2>
+    <p class="max-w-2xl mx-auto mb-16 text-lg text-gray-300">
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Documentation -->
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-4">
+          <div class="bg-blue-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-book text-3xl text-blue-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white">Comprehensive Documentation</h3>
+        </div>
+        <ul class="text-gray-300 space-y-2 ml-1">
+          <li>• Technical & functional documentation</li>
+          <li>• System architecture & API reference</li>
+          <li>• User manuals & training notes</li>
+        </ul>
+      </div>
+
+      <!-- Source Code & Access -->
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-4">
+          <div class="bg-cyan-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-code text-3xl text-cyan-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white">Source Code & Access</h3>
+        </div>
+        <ul class="text-gray-300 space-y-2 ml-1">
+          <li>• Full source code & repository access</li>
+          <li>• Deployment setup & environment configs</li>
+          <li>• Database exports & digital assets</li>
+        </ul>
+      </div>
+
+      <!-- Support & Training -->
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-4">
+          <div class="bg-purple-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-headset text-3xl text-purple-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white">Support & Training</h3>
+        </div>
+        <ul class="text-gray-300 space-y-2 ml-1">
+          <li>• Post-launch maintenance & fixes</li>
+          <li>• Admin & operator onboarding</li>
+          <li>• Dedicated technical support team</li>
+        </ul>
+      </div>
+
+      <!-- Deployment & Hosting -->
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-4">
+          <div class="bg-green-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-server text-3xl text-green-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white">Deployment & Hosting</h3>
+        </div>
+        <ul class="text-gray-300 space-y-2 ml-1">
+          <li>• Secure deployment to staging & production</li>
+          <li>• CI/CD pipeline setup (GitHub, GitLab)</li>
+          <li>• Cloud & domain configuration</li>
+        </ul>
+      </div>
+
+      <!-- Performance & Security -->
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-4">
+          <div class="bg-amber-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-shield-alt text-3xl text-amber-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white">Performance & Security</h3>
+        </div>
+        <ul class="text-gray-300 space-y-2 ml-1">
+          <li>• Performance optimization reports</li>
+          <li>• Security audits & SSL integration</li>
+          <li>• Backup & rollback setup</li>
+        </ul>
+      </div>
+
+      <!-- Future Scalability -->
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-4">
+          <div class="bg-pink-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-chart-line text-3xl text-pink-400"></i>
+          </div>
+          <h3 class="text-xl font-semibold text-white">Future Scalability</h3>
+        </div>
+        <ul class="text-gray-300 space-y-2 ml-1">
+          <li>• Modular architecture for easy expansion</li>
+          <li>• Versioning & upgrade documentation</li>
+          <li>• Roadmap suggestions for next phase</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Live Analytics & System Overview Section -->
+<section id="analytics" class="py-20 px-6 text-gray-100">
+  <div class="container mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-6 text-white">Live Analytics Dashboard & System Overview</h2>
+    <p class="max-w-3xl mx-auto mb-16 text-lg text-gray-300">
+      From real-time task tracking to advanced logistics automation — our integrated systems empower smarter decisions and smoother operations.
+    </p>
+
+    <!-- 🧠 Live Analytics Dashboard -->
+    <h3 class="text-2xl font-semibold mb-6 text-blue-400">Live Analytics Dashboard</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-blue-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-tasks text-3xl text-blue-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Tasks Overview</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Summary of completed, pending, and overdue tasks for real-time progress tracking.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-cyan-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-chart-line text-3xl text-cyan-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Task Trends</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Visualizes completion rates, team performance, and productivity trends over time.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-red-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-exclamation-triangle text-3xl text-red-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Overdue Tasks</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Highlights overdue tasks categorized by department, urgency, or client impact.</p>
+      </div>
+    </div>
+
+    <!-- 🚚 Logistics System Components -->
+    <h3 class="text-2xl font-semibold mb-6 text-green-400">Logistics System Components</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-blue-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-clipboard-list text-3xl text-blue-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Order Management</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Syncs orders and inventory with CRM for end-to-end visibility and automation.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-amber-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-warehouse text-3xl text-amber-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Warehouse Management</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Optimizes storage, picking routes, and packaging flows to reduce handling time.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-cyan-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-truck-moving text-3xl text-cyan-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Transportation Management</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Manages fleet and shipments with real-time GPS tracking and route updates.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-teal-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-boxes text-3xl text-teal-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Inventory Management</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Automates inventory updates and reordering using RFID & barcode tracking.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-purple-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-chart-pie text-3xl text-purple-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Analytics & Reporting</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Delivers actionable insights using BI dashboards, KPIs, and performance metrics.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-pink-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-undo text-3xl text-pink-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Reverse Logistics</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Streamlines returns and refurbishments with real-time monitoring and status updates.</p>
+      </div>
+    </div>
+
+    <!-- ⚙️ Advanced System Designs -->
+    <h3 class="text-2xl font-semibold mb-6 text-amber-400">Advanced System Designs</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-green-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-shuttle-van text-3xl text-green-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Fleet Management</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Real-time IoT-based vehicle monitoring for maximum operational control.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-blue-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-route text-3xl text-blue-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Route Optimization</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Dynamic route planning with machine learning for faster delivery cycles.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-cyan-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-box-open text-3xl text-cyan-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Real-Time Package Tracking</h4>
+        </div>
+        <p class="text-gray-300 text-sm">WebSocket-driven, scalable tracking architecture for live shipment visibility.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-amber-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-bullseye text-3xl text-amber-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Demand Forecasting</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Predicts future stock demand using ML-driven trend and event data analysis.</p>
+      </div>
+    </div>
+
+    <!-- 🏭 Industries We Serve -->
+    <h3 class="text-2xl font-semibold mb-6 text-pink-400">Industries We Serve</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-indigo-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-industry text-3xl text-indigo-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Manufacturing</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Streamlines production through supplier coordination and resource planning.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-yellow-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-shopping-cart text-3xl text-yellow-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Retail & eCommerce</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Optimizes omnichannel inventory and fulfillment for seamless user experiences.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-left hover:scale-[1.03] transition-transform">
+        <div class="flex items-center mb-3">
+          <div class="bg-green-500/20 p-3 rounded-xl mr-3">
+            <i class="fas fa-prescription-bottle-alt text-3xl text-green-400"></i>
+          </div>
+          <h4 class="text-xl font-semibold text-white">Pharmaceutical</h4>
+        </div>
+        <p class="text-gray-300 text-sm">Ensures full compliance with batch tracking and cold-chain monitoring systems.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Core Values & Process Section -->
+<section id="values-process" class="py-20 px-6 text-gray-100">
+  <div class="container mx-auto">
+
+    <!-- Core Values -->
+    <h2 class="text-4xl font-bold text-center mb-12 text-blue-400">Our Core Values</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+      <div class="glass-card p-6 rounded-2xl text-center hover:-translate-y-2 transition-transform">
+        <i class="fas fa-lightbulb text-4xl text-yellow-400 mb-4"></i>
+        <h3 class="text-lg font-semibold mb-2">Innovation</h3>
+        <p class="text-sm text-gray-300">Pushing boundaries with next-gen, tech-driven solutions.</p>
+      </div>
+      <div class="glass-card p-6 rounded-2xl text-center hover:-translate-y-2 transition-transform">
+        <i class="fas fa-handshake text-4xl text-blue-400 mb-4"></i>
+        <h3 class="text-lg font-semibold mb-2">Transparency</h3>
+        <p class="text-sm text-gray-300">Open communication and full collaboration in every step.</p>
+      </div>
+      <div class="glass-card p-6 rounded-2xl text-center hover:-translate-y-2 transition-transform">
+        <i class="fas fa-leaf text-4xl text-green-400 mb-4"></i>
+        <h3 class="text-lg font-semibold mb-2">Sustainability</h3>
+        <p class="text-sm text-gray-300">Eco-efficient processes that minimize waste and maximize value.</p>
+      </div>
+      <div class="glass-card p-6 rounded-2xl text-center hover:-translate-y-2 transition-transform">
+        <i class="fas fa-users text-4xl text-pink-400 mb-4"></i>
+        <h3 class="text-lg font-semibold mb-2">Collaboration</h3>
+        <p class="text-sm text-gray-300">Teamwork, shared ideas, and diversity fuel innovation.</p>
+      </div>
+      <div class="glass-card p-6 rounded-2xl text-center hover:-translate-y-2 transition-transform">
+        <i class="fas fa-trophy text-4xl text-amber-400 mb-4"></i>
+        <h3 class="text-lg font-semibold mb-2">Excellence</h3>
+        <p class="text-sm text-gray-300">Delivering consistent, high-quality results that stand out.</p>
+      </div>
+    </div>
+
+    <!-- Divider Line -->
+    <div class="h-[1px] bg-gradient-to-r from-transparent via-blue-500 to-transparent my-20"></div>
+
+    <!-- Process -->
+    <h2 class="text-4xl font-bold text-center mb-12 text-blue-400">Get Started in Three Steps</h2>
+    <p class="max-w-2xl mx-auto text-center mb-12 text-gray-400">
+      Our process is designed to be fast, flexible, and fully tailored to your business goals.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div class="glass-card p-8 rounded-2xl text-center hover:shadow-lg hover:-translate-y-2 transition">
+        <div class="flex justify-center items-center mb-6">
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-blue-500/20 border border-blue-400">
+            <i class="fas fa-comments text-2xl text-blue-400"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">1. Consultation & Planning</h3>
+        <p class="text-sm text-gray-300">We craft strategic roadmaps and project plans aligned with your business vision.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-center hover:shadow-lg hover:-translate-y-2 transition">
+        <div class="flex justify-center items-center mb-6">
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-green-500/20 border border-green-400">
+            <i class="fas fa-code text-2xl text-green-400"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">2. Design & Development</h3>
+        <p class="text-sm text-gray-300">Our team builds secure, scalable, and user-friendly digital solutions.</p>
+      </div>
+
+      <div class="glass-card p-8 rounded-2xl text-center hover:shadow-lg hover:-translate-y-2 transition">
+        <div class="flex justify-center items-center mb-6">
+          <div class="w-14 h-14 flex items-center justify-center rounded-full bg-amber-500/20 border border-amber-400">
+            <i class="fas fa-rocket text-2xl text-amber-400"></i>
+          </div>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">3. Launch & Support</h3>
+        <p class="text-sm text-gray-300">Seamless deployment with ongoing technical support and optimization.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+    <!-- Contact Section -->
+<section id="contact" class="py-24 px-6 text-gray-100">
+  <div class="container mx-auto max-w-3xl text-center">
+    <h2 class="text-4xl font-bold mb-4 text-blue-400">Get in Touch</h2>
+    <p class="text-gray-400 mb-12 max-w-xl mx-auto">
+      Have a project in mind or just want to chat? Let’s build something great together.
+    </p>
+
+    <div class="glass-card p-10 rounded-3xl shadow-lg hover:shadow-xl transition-all backdrop-blur-md">
+      <form id="contactForm" class="space-y-6 text-left">
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-300">Full Name</label>
+          <div class="relative">
+            <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+            <input type="text" id="name" placeholder="Enter your name"
+              class="w-full pl-10 pr-4 py-3 bg-transparent border border-gray-600 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-300">Email Address</label>
+          <div class="relative">
+            <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
+            <input type="email" id="email" placeholder="your@email.com"
+              class="w-full pl-10 pr-4 py-3 bg-transparent border border-gray-600 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-300">Company / Organization</label>
+          <div class="relative">
+            <i class="fas fa-building absolute left-3 top-3 text-gray-400"></i>
+            <input type="text" id="company" placeholder="Your company name"
+              class="w-full pl-10 pr-4 py-3 bg-transparent border border-gray-600 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-300">Message</label>
+          <div class="relative">
+            <i class="fas fa-comment-dots absolute left-3 top-3 text-gray-400"></i>
+            <textarea id="message" rows="5" placeholder="Tell us about your project..."
+              class="w-full pl-10 pr-4 py-3 bg-transparent border border-gray-600 rounded-xl focus:border-blue-400 focus:ring-1 focus:ring-blue-400 outline-none transition resize-none"></textarea>
+          </div>
+        </div>
+
+        <button type="button" onclick="submitForm()"
+          class="w-full mt-4 bg-gradient-to-r from-blue-500 to-cyan-400 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition">
+          <i class="fas fa-paper-plane"></i> Send Message
+        </button>
+      </form>
+    </div>
+
+    <!-- Optional Contact Info Below -->
+    <div class="mt-12 flex flex-col md:flex-row justify-center gap-8 text-gray-400 text-sm">
+      <div class="flex items-center gap-2"><i class="fas fa-phone text-blue-400"></i> +91 98765 43210</div>
+      <div class="flex items-center gap-2"><i class="fas fa-envelope text-blue-400"></i> contact@yourcompany.com</div>
+      <div class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-400"></i> Ahmedabad, India</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function submitForm() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
+    if (!name || !email || !message) {
+      alert('Please fill in all required fields!');
+      return;
+    }
+    alert('Thanks for reaching out! We’ll get back to you soon.');
+    document.getElementById('contactForm').reset();
+  }
+</script>
+
+                
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass py-10 px-6 mt-20">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">TechAnarc</h3>
+                    <p class="text-blue-100">Ahmedabad, Gujarat</p>
+                    <p class="text-blue-100">sp3322927@gmail.com</p>
+                    <p class="text-blue-100">+91 7573839051</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Quick Links</h3>
+                    <div class="space-y-2 text-blue-100">
+                        <a href="#" class="block hover:text-white transition">About</a>
+                        <a href="#" class="block hover:text-white transition">Careers</a>
+                        <a href="#" class="block hover:text-white transition">Privacy</a>
+                        <a href="#" class="block hover:text-white transition">Blog</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Connect</h3>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-2xl hover:text-blue-300 transition"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-2xl hover:text-blue-300 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-2xl hover:text-blue-300 transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-2xl hover:text-blue-300 transition"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center text-sm text-blue-200 border-t border-white/20 pt-6">
+                © 2021 TechAnarc | Innovating Without Limits
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="webMobileModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('webMobileModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Web & Mobile Development</h3>
+            <p class="text-gray-600 mb-4">Powered by React, TypeScript, and Docker, delivering responsive, high-performance applications that enhance user engagement by 30%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Responsive web and mobile apps</li>
+                <li>High-performance with React</li>
+                <li>Scalable deployment with Docker</li>
+                <li>Seamless user experience design</li>
+            </ul>
+            <button onclick="closeModal('webMobileModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="aiAutomationModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('aiAutomationModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">AI & Automation</h3>
+            <p class="text-gray-600 mb-4">Built with TensorFlow, Python, and Apache Kafka, streamlining operations with intelligent automation that boosts productivity by 25%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>AI-driven process automation</li>
+                <li>Real-time analytics with Kafka</li>
+                <li>Predictive models with TensorFlow</li>
+                <li>Scalable operational efficiency</li>
+            </ul>
+            <button onclick="closeModal('aiAutomationModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="digitalStrategyModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('digitalStrategyModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Digital Strategy & Design</h3>
+            <p class="text-gray-600 mb-4">Leveraging Figma and Google Analytics to create impactful UI/UX and marketing strategies that increase online engagement by 20%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Engaging UI/UX with Figma</li>
+                <li>Data-driven marketing strategies</li>
+                <li>Analytics with Google Analytics</li>
+                <li>Optimized digital presence</li>
+            </ul>
+            <button onclick="closeModal('digitalStrategyModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="webAppModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('webAppModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Web App Development</h3>
+            <p class="text-gray-600 mb-4">Scalable, secure solutions with Java, JavaScript (React, Node.js), and TypeScript for responsive front-end and robust back-end systems.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Custom front-end and back-end</li>
+                <li>Cloud integration (AWS, Azure, GCP)</li>
+                <li>Secure APIs and microservices</li>
+                <li>Scalable enterprise solutions</li>
+            </ul>
+            <button onclick="closeModal('webAppModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="mobileAppModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('mobileAppModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Mobile App Development</h3>
+            <p class="text-gray-600 mb-4">Cross-platform and native apps using Swift, Kotlin, React Native for seamless iOS and Android experiences.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Native iOS (Swift) and Android (Kotlin)</li>
+                <li>Cross-platform with React Native</li>
+                <li>App store optimization</li>
+                <li>Third-party API integration</li>
+            </ul>
+            <button onclick="closeModal('mobileAppModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="cloudModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('cloudModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Cloud Solutions</h3>
+            <p class="text-gray-600 mb-4">Secure, scalable cloud infrastructure with AWS, Azure, and Docker for efficient resource management and high availability.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>AWS and Azure deployment</li>
+                <li>Containerized with Docker</li>
+                <li>Auto-scaling and load balancing</li>
+                <li>99.9% uptime guarantee</li>
+            </ul>
+            <button onclick="closeModal('cloudModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="controlTowerModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('controlTowerModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Control Tower</h3>
+            <p class="text-gray-600 mb-4">Built with Java and Docker, providing end-to-end supply chain visibility with real-time dashboards, reducing delays by 40%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Real-time supply chain monitoring</li>
+                <li>Advanced analytics dashboards</li>
+                <li>Seamless process integration</li>
+                <li>Automated alerts and insights</li>
+            </ul>
+            <button onclick="closeModal('controlTowerModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="demandModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('demandModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Demand Forecasting</h3>
+            <p class="text-gray-600 mb-4">AI-powered solution with TensorFlow and Python, delivering precise forecasting that reduces errors by 30%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>AI-driven demand forecasting</li>
+                <li>Real-time market insights</li>
+                <li>Reduced forecasting errors</li>
+                <li>Scalable for all industries</li>
+            </ul>
+            <button onclick="closeModal('demandModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="inventoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('inventoryModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Inventory Management</h3>
+            <p class="text-gray-600 mb-4">Built with JavaScript and SQL, optimizing stock levels with real-time insights and RFID tracking, reducing overstock by 15%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Real-time inventory tracking</li>
+                <li>Automated reordering systems</li>
+                <li>RFID and IoT integration</li>
+                <li>Predictive stock optimization</li>
+            </ul>
+            <button onclick="closeModal('inventoryModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <div id="transportationModal" class="modal">
+        <div class="modal-content">
+            <span class="close float-right" onclick="closeModal('transportationModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4 text-gray-800">Transportation</h3>
+            <p class="text-gray-600 mb-4">Leveraging Go and Docker to optimize multi-modal logistics with real-time tracking, cutting costs by 20%.</p>
+            <ul class="list-disc pl-5 mb-4 text-gray-700">
+                <li>Multi-modal route optimization</li>
+                <li>Real-time tracking systems</li>
+                <li>Cost-efficient logistics planning</li>
+                <li>Cloud-based scalability</li>
+            </ul>
+            <button onclick="closeModal('transportationModal');document.getElementById('contact').scrollIntoView({behavior:'smooth'})" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">Request a Demo</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        }
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            if (name && email) {
+                alert('Thank you! We will get back to you soon.');
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('company').value = '';
+                document.getElementById('message').value = '';
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        }
+    </script>
+</body>
+</html>
